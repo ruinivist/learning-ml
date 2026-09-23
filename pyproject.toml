@@ -1,0 +1,19 @@
+[project]
+name = "learning-ml"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.14.0",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+]
