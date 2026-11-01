@@ -69,7 +69,9 @@ that
 note that thus $\log_2(\text{counts})$ is just the general case? what if probs are
 unequal?
 
-$$H(p) = \text{entropy (Shannon entropy)} = -\sum_x p(x)\log_2 p(x)$$
+$$
+H(p) = \text{entropy (Shannon entropy)} = -\sum_x p(x)\log_2 p(x)
+$$
 
 Now this negative and all looks a bit weird but note that probabs are all less
 than one so inner terms are negative, what $H(p)$ will give you is the average
@@ -77,7 +79,7 @@ number of bits => proven to be the theoretical minimum ( the proof I'll skip )
 for encoding some outcomes, biased or unbiased
 
 for the 3 die case, each p(x) being 1/3
-this is $3 \times -\frac{1}{3}\log_2\!\left(\frac{1}{3}\right) \Rightarrow -\log_2(3^{-1}) \Rightarrow \log_2(3)$
+this is $3 \times -\frac{1}{3}\log_2\left(\frac{1}{3}\right) \Rightarrow -\log_2(3^{-1}) \Rightarrow \log_2(3)$
 
 Relating to $I(x)$
 $I(x) = -\log p(x)$ => how rare is $p$, the smaller it is, the more bits we need to
@@ -97,7 +99,9 @@ the cross entropy "loss" is case where $p$ is `y_true` and $q$ is `y_preds`
 
 KL divergence => $\mathrm{KL}(p\|q)$ is simply the extra cost from the wrong belief
 
-$$H(p,q) - H(p) \Rightarrow \sum_x p(x)\log\!\left(\frac{p(x)}{q(x)}\right)$$
+$$
+H(p,q) - H(p) \Rightarrow \sum_x p(x)\log\left(\frac{p(x)}{q(x)}\right)
+$$
 
 so cross entropy is -> total cost paid
 entropy -> cost if you are right
@@ -128,19 +132,19 @@ on a 1-d tensor `t[3,]` is the tuple `(3,)` => same as `t[3]`, not a slice.
 
 on t of shape `(4, 5)`:
 
-| form         | example   | shape     | note                         |
-|--------------|-----------|-----------|------------------------------|
-| int          | t[1]      | (5,)      | DROPS the dim                |
-| slice        | t[1:3]    | (2, 5)    | KEEPS the dim                |
-| slice to end | t[1:]     | (3, 5)    | colon, not comma             |
-| per-dim      | t[1, 2]   | ()        | scalar tensor                |
-| row          | t[1, :]   | (5,)      |                              |
-| column       | t[:, 2]   | (4,)      |                              |
-| ellipsis     | t[..., 2] | (4,)      | last dim, whatever precedes  |
-| newaxis      | t[None]   | (1, 4, 5) | INSERTS a dim                |
-|              | t[:, None]| (4, 1, 5) | insert anywhere              |
-| bool mask    | t[t > 0]  | (k,)      | flattens to the matches      |
-| index tensor | t[[0, 3]] | (2, 5)    | gathers those rows, in order |
+| form         | example      | shape       | note                         |
+| ------------ | ------------ | ----------- | ---------------------------- |
+| int          | `t[1]`       | `(5,)`      | DROPS the dim                |
+| slice        | `t[1:3]`     | `(2, 5)`    | KEEPS the dim                |
+| slice to end | `t[1:]`      | `(3, 5)`    | colon, not comma             |
+| per-dim      | `t[1, 2]`    | `()`        | scalar tensor                |
+| row          | `t[1, :]`    | `(5,)`      |                              |
+| column       | `t[:, 2]`    | `(4,)`      |                              |
+| ellipsis     | `t[..., 2]`  | `(4,)`      | last dim, whatever precedes  |
+| newaxis      | `t[None]`    | `(1, 4, 5)` | INSERTS a dim                |
+|              | `t[:, None]` | `(4, 1, 5)` | insert anywhere              |
+| bool mask    | `t[t > 0]`   | `(k,)`      | flattens to the matches      |
+| index tensor | `t[[0, 3]]`  | `(2, 5)`    | gathers those rows, in order |
 
 views vs copies:
 basic indexing (int, slice, ellipsis, None) -> VIEW, shares memory,
@@ -189,7 +193,9 @@ say tensor is (a,b,c,d)
 
 historically logit was from stats, as the logit func
 
-$$\operatorname{logit}(p) = \log\!\left(\frac{p}{1-p}\right)$$
+$$
+\operatorname{logit}(p) = \log\left(\frac{p}{1-p}\right)
+$$
 
 it's inverse of sigmoid ( real to probab range ) so does
 (0,1) to real
@@ -254,6 +260,7 @@ same in pytorch as they are in numpy
 ### Training
 
 the iteration is always
+
 ```python
 logits, loss = model(x,y)
 opt.zero_grad()
@@ -262,9 +269,8 @@ opt.step()
 ```
 
 the gradients live in each parameter
-```python
-model.token_embedding.weight.grad
-```
+
+`model.token_embedding.weight.grad`
 
 rem, backward on loss and rest on opts
 you never call forward directly
@@ -293,9 +299,10 @@ don't use any here so doesn't matter
 in this you give a comma separated list of SELECTORS ( not real term )
 selectors are assigned left to right, a missing one is just ":"
 for each selector it can be
-":" -> all
-"2:4", index 2 inc to 3 excl
-"-1" -> just the last one, negative indices work obviously
+
+- `:` -> all
+- `2:4`, index 2 inc to 4 excl
+- `-1` -> just the last one, negative indices work obviously
 
 > for slicing, "x:" is same as "x:None"
 
@@ -306,16 +313,20 @@ logits[:, -1, :]
   :  on dim0 -> keep whole batch dim, untouched
  -1  on dim1 -> INT index, so it DROPS this dim, keeps only last time step
   :  on dim2 -> keep all C channels, untouched
- (B, T, C) -> (B, C)  # dim1 gone entirely, not size 1, GONE as you select
- a specific index, if you need it need to select as slice of len 1
+ (B, T, C) -> (B, C)
 ```
+
+dim1 gone entirely, not size 1, GONE as you select
+a specific index, if you need it need to select as slice of len 1
 
 ### Softmax
 
 converting logits to preds
 say v is the vector of logits
 
-$$p(i) = \frac{\exp(v_i)}{\sum_j \exp(v_j)}$$
+$$
+p(i) = \frac{\exp(v_i)}{\sum_j \exp(v_j)}
+$$
 
 ### Multinomial selection
 
@@ -357,13 +368,13 @@ $$
 
 Project each token in q, k and v dimension each
 
-Query -> what I'm asking for
-Key -> what I use to match against with that query
-Value -> once matched, what I use
+- Query -> what I'm asking for
+- Key -> what I use to match against with that query
+- Value -> once matched, what I use
 
 $\operatorname{Score}(i,j) = q_i \cdot k_j$
 how well this query i matches against key j
-magic for math reasons -> $S(i,j) \mathrel{/}= \sqrt{d_k}$
+magic for math reasons -> $S(i,j) \leftarrow S(i,j) / \sqrt{d_k}$
 Mask where query is matching against future ( $j > i$ ) = -inf
 what is each row now ?
 score(i, ...j ) -> for each query i, including only past j
@@ -379,12 +390,15 @@ note that this A is a lower left triangle, upper half is masked
 now $\mathrm{out}_i$ => for each query token weight by probabilities the values ( we USE
 values )
 
-$$\mathrm{out}_i = \sum_j A(i,j) \cdot v_j$$
+$$
+\mathrm{out}_i = \sum_j A(i,j) \cdot v_j
+$$
 
 match score probability for jth key $\times$ jth value
 so then this output is $d_v$ dimensional
 
 in practice "head_size" = $d_v = d_k$
+
 > there is no separate $d_q$, since we need to dot $d_k$ MUST = $d_q$
 
 ### Position embedding
@@ -400,7 +414,9 @@ why not just append an index based token?
 
 ### Why higher dims almost orthogonal
 
-$$\text{dot product} = \sum_i u_i v_i$$
+$$
+\text{dot product} = \sum_i u_i v_i
+$$
 
 ui and vi are independent, their products then are too, idea being you start at
 0 and accumulate deltas = $u_i v_i$ which is similar to a random walk of len d
@@ -410,7 +426,9 @@ that vec the scalar becomes $1 / \sqrt d$
 
 so in input we get
 
-$$x = \mathrm{token\_emb} + \mathrm{pos\_emb}$$
+$$
+x = \mathrm{token\_emb} + \mathrm{pos\_emb}
+$$
 
 ( not concat )
 
@@ -474,33 +492,39 @@ a perceptron is just activation( lin transform )
 mlp is just a linear transform after this
 so lin( act( lin ) )
 
-```text
 what's "layer" ?
-h0 = act( W x + b )
-hi = act( W h(i-1) + b)
-y = W h(n-1) + b   // no act -> readout
-```
+
+$$
+\begin{aligned}
+h_0 &= \operatorname{act}(W x + b) \\
+h_i &= \operatorname{act}(W h_{i-1} + b) \\
+y &= W h_{n-1} + b
+\end{aligned}
+$$
+
+y has no act -> readout
 
 ### Attention one liner
 
-$$\mathrm{logits} = W_{\mathrm{lm}} \cdot \left[\operatorname{softmax}\!\left(\frac{(W_q x)(W_k x)^T}{\sqrt d} + \mathrm{mask}\right) \cdot (W_v x)\right]$$
+$$
+\mathrm{logits} = W_{\mathrm{lm}} \cdot \left[\operatorname{softmax}\left(\frac{(W_q x)(W_k x)^T}{\sqrt d} + \mathrm{mask}\right) \cdot (W_v x)\right]
+$$
 
-```text
-|       |          |---------------- A(x), (T,T) --------|   |
-|       readout                 routing weights              values
-```
+$W_{\mathrm{lm}}$ -> readout; $A(x)$ -> routing weights, $(T,T)$; $W_v x$ -> values
 
-$$x = E_{\mathrm{tokens}} + P_{\mathrm{positions}} \qquad (B,T,C)$$
+$$
+x = E_{\mathrm{tokens}} + P_{\mathrm{positions}} \qquad (B,T,C)
+$$
 
 Note that everything after A softmax is one chain or matrices W_v and W_lm
 the linear transforms collapse to just one
 this is where we put in FFN we learn the "curves" in between
 
-$$\mathrm{logits} = W_{\mathrm{lm}} \cdot W_2 \cdot \operatorname{ReLU}\!\left(W_1 \cdot [A(x) \cdot W_v x] + b_1\right) + b_2$$
+$$
+\mathrm{logits} = W_{\mathrm{lm}} \cdot W_2 \cdot \operatorname{ReLU}\left(W_1 \cdot [A(x) \cdot W_v x] + b_1\right) + b_2
+$$
 
-```text
-| | | | | | | | | | |--------- the only bend ---------|
-```
+$\operatorname{ReLU}$ -> the only bend
 
 A learns who is relevant to what
 $W_v$ learns its contribution | given relevance
@@ -554,14 +578,20 @@ that Wo and l1 collapse so no gain here from a Wo
 block = mha + ffn ( right now my mha is separate module but ffn is in the combined model )
 
 residual stream = Output after ffn
-```text
-x0 = embed + pos
-x1 = mha(x0)
-x2 = ffn(x1)
-logits = W_(lm_head I think I renamed it to something but yeah we want logit dim to be vocab size, this'll do a proj) . x2
-```
+
+$$
+\begin{aligned}
+x_0 &= \mathrm{embed} + \mathrm{pos} \\
+x_1 &= \operatorname{mha}(x_0) \\
+x_2 &= \operatorname{ffn}(x_1) \\
+\mathrm{logits} &= W_{\mathrm{lm\_head}} \cdot x_2
+\end{aligned}
+$$
+
+lm_head I think I renamed it to something but yeah we want logit dim to be vocab size, this'll do a proj
 
 > showing we need multiple layers ( INCOMPLETE )
+
 paper from elhage that with an experiment shows 2 layers can learn what one layer just cannot
 this x2 is the "residual" for one layer
 note that we are talking about multi layers here, so residual0 = tok + pos emb
@@ -583,14 +613,17 @@ say it learned to match A with A and that B follows A
 CC is just hallucinative, we have reached no coherent result, dropping this
 
 > offtopic: do we not use dropout on these at all
+
 residual are not dropouts, was mixing this up
 in general for llms we don't use dropouts because there the idea is of regularisation
 needed due to possible over-fitting due to seeing the same data again and again
 here text corpus is so big that most of the data is never seen in a random training
+
 so block = mh + ff
 
 at layer 6 this was way bad
 ( todo) check this bit about some rank collapse
+
 > CC: This is the rank collapse from Dong et al., and it bites at depth 3, not at depth 12. I was wrong about the scale.
 
 running at layers = 2 it converges better but does not really improve over baselines in any significant way
@@ -607,8 +640,8 @@ currently we have multiple layers of
 
 ```text
 block(x):
-| x = mha(x)
-| x = ffn(x)
+    x = mha(x)
+    x = ffn(x)
 ```
 
 at each block only what block at that layer learns to keep remains so not only does it need to learn to keep relevant bits
@@ -654,20 +687,22 @@ the problem is that each sublayer "accumulates" signal
 the idea of residuals was that we want to accumulate signals, accumulating magnitudes are a side effect
 problem from that cause
 
-1) larger magnitudes increase the effective learning rate for deeper layers
-which then have larger gradients due to the higher magnitudes so higher
-layers end up over-adjusting
+1. larger magnitudes increase the effective learning rate for deeper layers
+   which then have larger gradients due to the higher magnitudes so higher
+   layers end up over-adjusting
 
-2) softmax saturation => softmax is not scale invariant
+2. softmax saturation => softmax is not scale invariant
 
-```text
-|scores [0, 1, 2]        -> [0.09, 0.24, 0.67]    soft blend
-|scores [0, 12, 24]      -> [~0, ~0, 1.00]       one-hot
-```
+   ```text
+   scores [0, 1, 2]        -> [0.09, 0.24, 0.67]    soft blend
+   scores [0, 12, 24]      -> [~0, ~0, 1.00]       one-hot
+   ```
 
 ===> prereq => change in mag and direction of sum of high dimensional vectors
 
-$$x_L = \sum_i x_i$$
+$$
+x_L = \sum_i x_i
+$$
 
 where each $x_i$ is in $\mathbb R^n$
 
@@ -677,14 +712,19 @@ simply $\mathbb E[u \cdot v] \to 0$ and $\operatorname{std}[u \cdot v] = 1 / \sq
 so as the dimension increases it's more and more closer to 0
 cosine being 90 degrees then
 
-> $$\|a+b\|^2 = \|a\|^2 + \|b\|^2 + 2\langle a,b\rangle$$
+$$
+\|a+b\|^2 = \|a\|^2 + \|b\|^2 + 2\langle a,b\rangle
+$$
+
 idea being that same as scalars, dot product as a bin op is same as scalar mult
 ( commutative and distributive )
 
 so that dot product drops out as -> 0
 say we have k of those additions, each of len w
 
-$$\|x_L\| = \|w\|\sqrt{k}$$
+$$
+\|x_L\| = \|w\|\sqrt{k}
+$$
 
 grows in $\sqrt k$ => k is the number of times we add
 
